@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mistwood">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#1a1a2e">
+<title>Mistwood Scorer</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+
+  :root {
+    --bg:        #0f0e17;
+    --surface:   #1a1929;
+    --surface2:  #221f35;
+    --border:    rgba(180,160,255,0.12);
+    --border2:   rgba(180,160,255,0.25);
+    --accent:    #9f7aea;
+    --accent2:   #c3a6ff;
+    --gold:      #e2c97e;
+    --gold2:     #f5e4a8;
+    --text:      #e8e3f5;
+    --muted:     #9b94b8;
+    --danger:    #f87171;
+    --success:   #6ee7b7;
+    --radius:    14px;
+    --radius-sm: 8px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html { background: var(--bg); }
+
+  body {
+    font-family: 'Crimson Text', Georgia, serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100dvh;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* ── ornamental bg ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(159,122,234,0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 60% 40% at 80% 110%, rgba(226,201,126,0.08) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    position: relative;
+    z-index: 1;
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 0 14px 32px;
+  }
+
+  /* ── header ── */
+  .header {
+    text-align: center;
+    padding: 28px 0 20px;
+  }
+  .header-ornament {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .header-ornament::before,
+  .header-ornament::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold));
+  }
+  .header-ornament::after {
+    background: linear-gradient(to left, transparent, var(--gold));
+  }
+  .gem {
+    width: 8px;
+    height: 8px;
+    background: var(--gold);
+    transform: rotate(45deg);
+  }
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--gold2);
+    letter-spacing: 0.12em;
+    text-shadow: 0 0 20px rgba(226,201,126,0.4);
+  }
+  .subtitle {
+    font-size: 14px;
+    font-style: italic;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* ── sections ── */
+  .section {
+    background: var(--surface);
+    border: 0.5px solid var(--border2);
+    border-radius: var(--radius);
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+
+  .section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--accent2);
+    padding: 10px 16px 8px;
+    border-bottom: 0.5px solid var(--border);
+    background: rgba(159,122,234,0.06);
+  }
+
+  .field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 16px;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .field:last-child { border-bottom: none; }
+
+  .field label {
+    font-size: 15px;
+    color: var(--text);
+    flex: 1;
+    line-height: 1.3;
+  }
+
+  .field input {
+    width: 88px;
+    padding: 7px 10px;
+    border: 0.5px solid var(--border2);
+    border-radius: var(--radius-sm);
+    background: var(--surface2);
+    color: var(--text);
+    font-family: 'Crimson Text', serif;
+    font-size: 16px;
+    text-align: right;
+    outline: none;
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+  }
+  .field input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(159,122,234,0.15);
+  }
+
+  /* ── calc button ── */
+  .btn-wrap { margin-bottom: 16px; }
+  .btn {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid var(--gold);
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, rgba(226,201,126,0.15) 0%, rgba(226,201,126,0.05) 100%);
+    color: var(--gold2);
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    text-shadow: 0 0 10px rgba(226,201,126,0.5);
+  }
+  .btn:active {
+    transform: scale(0.98);
+    background: rgba(226,201,126,0.22);
+  }
+
+  /* ── error ── */
+  .error {
+    background: rgba(248,113,113,0.1);
+    border: 0.5px solid rgba(248,113,113,0.35);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 14px;
+    color: var(--danger);
+    margin-bottom: 12px;
+    display: none;
+  }
+
+  /* ── result cards ── */
+  .results { display: none; }
+
+  .diff-card {
+    border-radius: var(--radius);
+    margin-bottom: 10px;
+    overflow: hidden;
+    border: 0.5px solid var(--border2);
+    animation: fadeUp 0.3s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .diff-card:nth-child(1) { animation-delay: 0.00s; }
+  .diff-card:nth-child(2) { animation-delay: 0.05s; }
+  .diff-card:nth-child(3) { animation-delay: 0.10s; }
+  .diff-card:nth-child(4) { animation-delay: 0.15s; }
+  .diff-card:nth-child(5) { animation-delay: 0.20s; }
+
+  .diff-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 0.5px solid var(--border);
+  }
+
+  .diff-meta { display: flex; flex-direction: column; gap: 3px; }
+
+  .diff-badge {
+    display: inline-block;
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    padding: 2px 8px;
+    border-radius: 99px;
+    border: 0.5px solid;
+  }
+
+  .d0 { background: rgba(110,231,183,0.1); border-color: rgba(110,231,183,0.4); color: #6ee7b7; }
+  .d1 { background: rgba(147,197,253,0.1); border-color: rgba(147,197,253,0.4); color: #93c5fd; }
+  .d2 { background: rgba(253,224,71,0.1);  border-color: rgba(253,224,71,0.4);  color: #fde047; }
+  .d3 { background: rgba(251,146,60,0.1);  border-color: rgba(251,146,60,0.4);  color: #fb923c; }
+  .d4 { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.4); color: #f87171; }
+
+  .diff-name {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    color: var(--text);
+    letter-spacing: 0.04em;
+  }
+
+  .diff-total {
+    text-align: right;
+  }
+  .diff-total-label {
+    font-size: 10px;
+    color: var(--muted);
+    font-style: italic;
+  }
+  .diff-total-num {
+    font-family: 'Cinzel', serif;
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--gold2);
+    text-shadow: 0 0 14px rgba(226,201,126,0.45);
+    line-height: 1;
+  }
+
+  .diff-rows { padding: 6px 16px 10px; background: var(--surface); }
+
+  .diff-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 5px 0;
+    border-bottom: 0.5px solid var(--border);
+    font-size: 14px;
+  }
+  .diff-row:last-child { border-bottom: none; }
+  .diff-lbl { color: var(--muted); font-style: italic; }
+  .diff-val { color: var(--text); font-weight: 600; }
+
+  /* ── install hint ── */
+  .install-hint {
+    text-align: center;
+    font-size: 12px;
+    font-style: italic;
+    color: var(--muted);
+    padding: 8px 0 4px;
+    margin-bottom: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="header">
+    <div class="header-ornament"><div class="gem"></div></div>
+    <h1>Mistwood</h1>
+    <p class="subtitle">Calculadora de pontuação final</p>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Valores impressos nas cartas</div>
+    <div class="field">
+      <label>Base da vila</label>
+      <input type="number" id="vila" inputmode="numeric" placeholder="0">
+    </div>
+    <div class="field">
+      <label>Fichas (exceto dificuldade)</label>
+      <input type="number" id="fichas" inputmode="numeric" placeholder="0">
+    </div>
+    <div class="field">
+      <label>Jornada</label>
+      <input type="number" id="jornada" inputmode="numeric" placeholder="0">
+    </div>
+    <div class="field">
+      <label>Eventos básicos</label>
+      <input type="number" id="ev_bas" inputmode="numeric" placeholder="0">
+    </div>
+    <div class="field">
+      <label>Maravilhas</label>
+      <input type="number" id="maravilhas" inputmode="numeric" placeholder="0">
+    </div>
+    <div class="field">
+      <label>Descoberta</label>
+      <input type="number" id="descoberta" inputmode="numeric" placeholder="0">
+    </div>
+    <div class="field">
+      <label>Expedição</label>
+      <input type="number" id="expedicao" inputmode="numeric" placeholder="0">
+    </div>
+    <div class="field">
+      <label>Condecorações</label>
+      <input type="number" id="condec" inputmode="numeric" placeholder="0">
+    </div>
+    <div class="field">
+      <label>Visitantes <span style="font-size:12px;color:var(--muted)">(sep. por espaço)</span></label>
+      <input type="text" id="visitantes" inputmode="numeric" placeholder="ex: 3 5 2" style="text-align:left">
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Em vez do valor impresso — informar quantidade</div>
+    <div class="field">
+      <label>Pontos de dificuldade</label>
+      <input type="number" id="dific" inputmode="numeric" placeholder="0">
+    </div>
+    <div class="field">
+      <label>Pérolas</label>
+      <input type="number" id="perolas" inputmode="numeric" placeholder="0">
+    </div>
+    <div class="field">
+      <label>Enfeites</label>
+      <input type="number" id="enfeites" inputmode="numeric" placeholder="0">
+    </div>
+    <div class="field">
+      <label>Eventos especiais</label>
+      <input type="number" id="ev_especial" inputmode="numeric" placeholder="0">
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Pontos bônus — informar quantidade</div>
+    <div class="field">
+      <label>Cartas de valor 0</label>
+      <input type="number" id="cartas_0" inputmode="numeric" placeholder="0">
+    </div>
+    <div class="field">
+      <label>Cartas de Prosperidade, Lendárias ou Newleaf</label>
+      <input type="number" id="prosp" inputmode="numeric" placeholder="0">
+    </div>
+  </div>
+
+  <div class="btn-wrap">
+    <button class="btn" onclick="calcular()">✦ Calcular Pontuação ✦</button>
+  </div>
+
+  <div class="error" id="erro"></div>
+  <div class="results" id="results"></div>
+
+</div>
+
+<script>
+const DIFFS = [
+  { n:4, nome:"Aterrorizante", cls:"d4", ev_e:6, enf:7, v_0:2, cartas:3 },
+  { n:3, nome:"Atormentadora", cls:"d3", ev_e:6, enf:6, v_0:1, cartas:2 },
+  { n:2, nome:"Problemática",  cls:"d2", ev_e:5, enf:5, v_0:1, cartas:1 },
+  { n:1, nome:"Complicada",    cls:"d1", ev_e:4, enf:4, v_0:1, cartas:0 },
+  { n:0, nome:"Mansa",         cls:"d0", ev_e:3, enf:3, v_0:0, cartas:0 },
+];
+
+function gn(id) {
+  const v = document.getElementById(id).value.trim();
+  return v === "" ? 0 : Number(v);
+}
+
+function calcular() {
+  const erro    = document.getElementById("erro");
+  const results = document.getElementById("results");
+  erro.style.display    = "none";
+  results.style.display = "none";
+
+  try {
+    const vila       = gn("vila");
+    const fichas     = gn("fichas");
+    const jornada    = gn("jornada");
+    const ev_bas     = gn("ev_bas");
+    const maravilhas = gn("maravilhas");
+    const descoberta = gn("descoberta");
+    const expedicao  = gn("expedicao");
+    const condec     = gn("condec");
+    const perolas    = 2 * gn("perolas");
+    const dificVal   = gn("dific");
+    const enfeitesV  = gn("enfeites");
+    const ev_espV    = gn("ev_especial");
+    const cartas_0V  = gn("cartas_0");
+    const prospV     = gn("prosp");
+
+    const raw = document.getElementById("visitantes").value.trim();
+    const visitantes = raw ? raw.split(/\s+/).map(Number) : [0];
+    if (visitantes.some(isNaN)) throw new Error("Visitantes: use números separados por espaço.");
+
+    const baseFixa = vila + fichas + jornada + ev_bas + maravilhas + descoberta + expedicao + condec + perolas;
+
+    let html = "";
+
+    for (const d of DIFFS) {
+      const dificPts   = d.n * dificVal;
+      const Visitantes = [...visitantes].sort((a,b)=>b-a).slice(0,d.n).reduce((s,v)=>s+v,0);
+      const ev_esp     = d.ev_e * ev_espV;
+      const Enfeites   = d.enf  * enfeitesV;
+      const val_0      = d.v_0  * cartas_0V;
+      const cartasPt   = d.cartas * prospV;
+      const Fichas     = fichas + dificPts;
+      const Eventos    = ev_bas + ev_esp;
+      const Bonus      = val_0 + cartasPt;
+      const Total      = dificPts + Visitantes + ev_esp + Enfeites + val_0 + cartasPt + baseFixa;
+
+      const rows = [
+        ["Base da vila", vila],
+        ["Fichas + dific.", Fichas],
+        ["Eventos", Eventos],
+        ["Jornada", jornada],
+        ["Bônus", Bonus],
+        perolas    ? ["Pérolas", perolas]      : null,
+        maravilhas ? ["Maravilhas", maravilhas]: null,
+        Enfeites   ? ["Enfeites", Enfeites]    : null,
+        expedicao  ? ["Expedição", expedicao]  : null,
+        descoberta ? ["Descoberta", descoberta]: null,
+        Visitantes ? ["Visitantes", Visitantes]: null,
+        condec     ? ["Condecorações", condec] : null,
+      ].filter(Boolean);
+
+      html += `
+      <div class="diff-card">
+        <div class="diff-header" style="background:var(--surface2)">
+          <div class="diff-meta">
+            <span class="diff-badge ${d.cls}">${d.nome.toUpperCase()}</span>
+            <span class="diff-name">Dificuldade ${d.n}</span>
+          </div>
+          <div class="diff-total">
+            <div class="diff-total-label">pontos</div>
+            <div class="diff-total-num">${Total}</div>
+          </div>
+        </div>
+        <div class="diff-rows">
+          ${rows.map(([l,v])=>`
+          <div class="diff-row">
+            <span class="diff-lbl">${l}</span>
+            <span class="diff-val">${v}</span>
+          </div>`).join("")}
+        </div>
+      </div>`;
+    }
+
+    results.innerHTML = html;
+    results.style.display = "block";
+    setTimeout(() => results.scrollIntoView({ behavior:"smooth", block:"start" }), 50);
+
+  } catch(e) {
+    erro.textContent  = "Erro: " + e.message;
+    erro.style.display = "block";
+  }
+}
+</script>
+</body>
+</html>
