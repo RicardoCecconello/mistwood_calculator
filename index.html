@@ -300,7 +300,7 @@
   </div>
 
   <div class="section">
-    <div class="section-title">Valores impressos nas cartas</div>
+    <div class="section-title">Valores impressos</div>
     <div class="field">
       <label>Base da vila</label>
       <input type="number" id="vila" inputmode="numeric" placeholder="0">
@@ -340,7 +340,7 @@
   </div>
 
   <div class="section">
-    <div class="section-title">Em vez do valor impresso — informar quantidade</div>
+    <div class="section-title">Informar quantidade</div>
     <div class="field">
       <label>Pontos de dificuldade</label>
       <input type="number" id="dific" inputmode="numeric" placeholder="0">
@@ -438,10 +438,10 @@ function calcular() {
 
       const rows = [
         ["Base da vila", vila],
-        ["Fichas + dific.", Fichas],
+        ["Bônus", Bonus],
         ["Eventos", Eventos],
         ["Jornada", jornada],
-        ["Bônus", Bonus],
+        ["Fichas", Fichas],
         perolas    ? ["Pérolas", perolas]      : null,
         maravilhas ? ["Maravilhas", maravilhas]: null,
         Enfeites   ? ["Enfeites", Enfeites]    : null,
